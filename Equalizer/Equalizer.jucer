@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <JUCERPROJECT id="AEQ7fh" name="Equalizer" projectType="audioplug" useAppConfig="0"
-              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1">
+              addUsingNamespaceToJuceHeader="0" jucerFormatVersion="1" cppLanguageStandard="17">
   <MAINGROUP id="N8zVJw" name="Equalizer">
     <GROUP id="{F17B45F7-5704-AA07-A3A2-02ECDAC81D6A}" name="Source">
       <FILE id="o0yNyC" name="PluginProcessor.cpp" compile="1" resource="0"
