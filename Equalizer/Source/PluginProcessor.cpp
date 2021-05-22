@@ -166,7 +166,8 @@ bool EqualizerAudioProcessor::hasEditor() const
 
 juce::AudioProcessorEditor* EqualizerAudioProcessor::createEditor()
 {
-    return new EqualizerAudioProcessorEditor (*this);
+    //return new EqualizerAudioProcessorEditor (*this);
+    return new juce::GenericAudioProcessorEditor(*this);
 }
 
 //==============================================================================
@@ -181,6 +182,62 @@ void EqualizerAudioProcessor::setStateInformation (const void* data, int sizeInB
 {
     // You should use this method to restore your parameters from this memory block,
     // whose contents will have been created by the getStateInformation() call.
+}
+
+juce::AudioProcessorValueTreeState::ParameterLayout EqualizerAudioProcessor::createParameterLayout()
+{
+    juce::AudioProcessorValueTreeState::ParameterLayout layout;
+    
+    float lowestFreqHz = 20.f;
+    float highestFreqHz = 20000.f;
+    float stepFreqHz = 10.f;
+    float defaultPeakFreqHz = 750.f;
+    
+    float lowestGain = -24.f;
+    float highestGain = 24.f;
+    float stepGain = .5f;
+    float defaultGain = 1.f;
+    
+    float lowestQ = .1f;
+    float highestQ = 10.f;
+    float stepQ = 0.1f;
+    float defaultQ = 1.f;
+    
+    float freqSkewFactor = 1.f;    // below 1 expands low freqs, above 1 expands high freqs
+    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("lowCutFreq",
+                                                           "Low-Cut Freq. (Hz)",
+                                                           juce::NormalisableRange<float>(lowestFreqHz, highestFreqHz, stepFreqHz, freqSkewFactor), lowestFreqHz));
+    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("highCutFreq",
+                                                           "High-Cut Freq. (Hz)",
+                                                           juce::NormalisableRange<float>(lowestFreqHz, highestFreqHz, stepFreqHz, freqSkewFactor), highestFreqHz));
+    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("peakFreq",
+                                                           "Peak Freq. (Hz)",
+                                                           juce::NormalisableRange<float>(lowestFreqHz, highestFreqHz, stepFreqHz, freqSkewFactor), defaultPeakFreqHz));
+    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("peakGain",
+                                                           "Peak Gain (dB)",
+                                                           juce::NormalisableRange<float>(lowestGain, highestGain, stepGain, 1.f), defaultGain));
+    
+    layout.add(std::make_unique<juce::AudioParameterFloat>("peakQ",
+                                                           "Peak Q",
+                                                           juce::NormalisableRange<float>(lowestQ, highestQ, stepQ, 1.f), defaultQ));
+    
+    juce::StringArray options;
+    for (int i = 0; i < 4; ++i) {
+        juce::String option;
+        option << (12 + i*12) << " dB per octave";
+
+        options.add(option);
+    }
+    
+    layout.add(std::make_unique<juce::AudioParameterChoice>("lowCutSlope", "Low-Cut Slope", options, 0));
+    
+    layout.add(std::make_unique<juce::AudioParameterChoice>("highCutSlope", "High-Cut Slope", options, 0));
+        
+    return layout;
 }
 
 //==============================================================================
